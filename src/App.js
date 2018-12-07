@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import './App.css';
+import myMathLib from './myMathLib'
 
 class App extends Component {
   constructor() {
@@ -8,23 +8,34 @@ class App extends Component {
     this.state = {
       num1: '',
       num2: '',
-      result: ''
+      result: '',
+      isLoading: false
     }
     this.handleClick = this.handleClick.bind(this);
   }
 
   handleClick() {
-    const { num1, num2 } = this.state;
-    const biggest = this.getBiggest(num1, num2);
-    this.setState({ result: `The biggest is ${biggest}`});
+    this.setState({ isLoading: true });
+    // Simulate this taking a while so we can see the loading message.
+    setTimeout(() => {
+      const { num1, num2 } = this.state;
+      try {
+        const biggest = this.getBiggest(num1, num2);
+        this.setState({ result: `The biggest is ${biggest}`});
+      } catch (error) {
+        this.setState({ result: error.message })
+      } finally {
+        this.setState({ isLoading: false });
+      }
+    }, 500);
   }
 
   getBiggest(a, b) {
-    // Your code goes here
+    return myMathLib.getBiggest(a, b);
   }
 
   render() {
-    const { num1, num2, result } = this.state;
+    const { num1, num2, result, isLoading } = this.state;
 
     return (
       <div>
@@ -44,6 +55,7 @@ class App extends Component {
           </div>
           <div><button onClick={this.handleClick}>Get biggest</button></div>
           <div>{result}</div>
+          {isLoading && <div>Loading...</div>}
         </div>
       </div>
     );
